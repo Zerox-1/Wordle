@@ -9,7 +9,12 @@
 #include <algorithm>
 #include <fstream>
 using namespace std;
-string arrayOfWords[10] = {
+class Game {
+private:
+	int mAttemps = 5;
+	int mPlaying = 1;
+	int mScore = 0;
+	string arrayOfWords[10] = {
 		"лошадь",
 		"правда",
 		"судьбоносный",
@@ -20,13 +25,33 @@ string arrayOfWords[10] = {
 		"presentation",
 		"delete",
 		"git"
+	};
+	string getNewWord();
+	void writeInFile();
+	void readFromFile();
+	string checkWord(string word, string player);
+public:
+	void startGame();
+
 };
-string newWord() {
+string Game::getNewWord() {
+	string arrayOfWords[10] = {
+		"лошадь",
+		"правда",
+		"судьбоносный",
+		"поддубный",
+		"код",
+		"horse",
+		"queue",
+		"presentation",
+		"delete",
+		"git"
+	};
 	srand(time(0));
-	int len = arrayOfWords->length();
+	int len = arrayOfWords->size();
 	return arrayOfWords[rand() % len];
 }
-void infile(int Ball) {
+void Game::writeInFile() {
 	cout << "Введите имя:";
 	string name;
 	cin >> name;
@@ -56,20 +81,20 @@ void infile(int Ball) {
 	of.open("Records.txt", std::ios::in);
 	bool bl = true;
 	if (records.empty()) {
-		records.push_back(pair<int, string>(Ball, name));
+		records.push_back(pair<int, string>(mScore, name));
 	}
 	else {
 		for (int i = 0; i < records.size(); i++) {
 			if (records[i].second == name) {
-				if (records[i].first < Ball) {
-					records[i].first = Ball;
+				if (records[i].first < mScore) {
+					records[i].first = mScore;
 				}
 				bl = false;
 				break;
 			}
 		}
 		if (bl) {
-			records.push_back(pair<int, string>(Ball, name));
+			records.push_back(pair<int, string>(mScore, name));
 		}
 		std::sort(records.rbegin(),records.rend());
 	}
@@ -78,7 +103,7 @@ void infile(int Ball) {
 	}
 	of.close();
 }
-void fromfile() {
+void Game::readFromFile() {
 	string msg;
 	ifstream fs;
 	fs.open("Records.txt");
@@ -90,7 +115,7 @@ void fromfile() {
 	}
 	fs.close();
 }
-string checkWor(string word, string player) {
+string Game::checkWord(string word, string player) {
 
 	string correct(word.size(), '_');
 	vector<char> cor;
@@ -122,16 +147,16 @@ string checkWor(string word, string player) {
 	cout << "Слово:" << correct << endl;
 	return correct;
 }
-void game(int play, int n, int Ball) {
-	while (play == 1) {
-		string Word = newWord();
+void Game::startGame() {
+	while (mPlaying == 1) {
+		string Word = getNewWord();
 		cout << "Длина слова:" << Word.length() << endl;
 		int Sum;
-		for (int i = 0; i < n; i++) {
+		for (int i = 0; i < mAttemps; i++) {
 			string player;
 			cout << "Клиент:" << endl;
 			cin >> player;
-			string Word1 = checkWor(Word, player.substr(0, Word.length()));
+			string Word1 = checkWord(Word, player.substr(0, Word.length()));
 			if (Word1 == Word) {
 				switch (i)
 				{
@@ -153,27 +178,28 @@ void game(int play, int n, int Ball) {
 				}
 				break;
 			}
-			else if (i == n - 1) {
+			else if (i == mAttemps - 1) {
 				Sum = 0;
 			}
 		}
 		if (Sum == 0) {
-			cout << "Попытки закончились! Ваши баллы:" << Ball << endl;
+			cout << "Попытки закончились! Ваши баллы:" << mScore << endl;
+			writeInFile();
 			break;
 		}
-		Ball += Sum;
-		cout << "Вы заработали " << Ball << " баллов. Хотите продолжить? (y/n)" << endl;
+		mScore += Sum;
+		cout << "Вы заработали " << mScore << " баллов. Хотите продолжить? (y/n)" << endl;
 		string res;
 		cin >> res;
 		while (true) {
 			if (res == "n") {
-				play = 0;
-				cout << "Вы заработали " << Ball << " баллов." << endl;
-				infile(Ball);
+				mPlaying = 0;
+				cout << "Вы заработали " << mScore << " баллов." << endl;
+				writeInFile();
 				break;
 			}
 			else if (res == "y") {
-				play = 1;
+				mPlaying = 1;
 				break;
 			}
 			else {
@@ -182,16 +208,14 @@ void game(int play, int n, int Ball) {
 			cin >> res;
 		}
 	}
-	fromfile();
+	readFromFile();
 }
 int main()
 {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
-	int n = 5;
-	int play = 1;
-	int Ball = 0;
-	game(play, n, Ball);
+	Game game;
+	game.startGame();
 	return 0;
 
 }
