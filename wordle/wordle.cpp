@@ -14,7 +14,7 @@ private:
 	int mAttemps = 5;
 	int mPlaying = 1;
 	int mScore = 0;
-	string arrayOfWords[10] = {
+	string mArrayOfWords[10] = {
 		"лошадь",
 		"правда",
 		"судьбоносный",
@@ -36,8 +36,8 @@ public:
 };
 string Game::getNewWord() {
 	srand(time(0));
-	int len = size(arrayOfWords);
-	return arrayOfWords[rand() % len];
+	int len = size(mArrayOfWords);
+	return mArrayOfWords[rand() % len];
 }
 void Game::writeInFile() {
 	cout << "¬ведите им€:";
