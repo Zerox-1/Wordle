@@ -35,20 +35,8 @@ public:
 
 };
 string Game::getNewWord() {
-	string arrayOfWords[10] = {
-		"лошадь",
-		"правда",
-		"судьбоносный",
-		"поддубный",
-		"код",
-		"horse",
-		"queue",
-		"presentation",
-		"delete",
-		"git"
-	};
 	srand(time(0));
-	int len = arrayOfWords->size();
+	int len = size(arrayOfWords);
 	return arrayOfWords[rand() % len];
 }
 void Game::writeInFile() {
